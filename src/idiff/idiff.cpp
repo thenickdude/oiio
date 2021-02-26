@@ -52,7 +52,7 @@ static float hardfail    = std::numeric_limits<float>::max();
 static std::vector<std::string> filenames;
 //static bool comparemeta = false;
 static bool compareall = false;
-
+static bool noautopremult = false;
 
 
 static int
@@ -79,6 +79,7 @@ getargs(int argc, char* argv[])
                   "-v", &verbose, "Verbose status messages",
                   "-q", &quiet, "Quiet (minimal messages)",
                   "-a", &compareall, "Compare all subimages/miplevels",
+                  "-no-autopremult", &noautopremult, "Turn off automatic premultiplication of images with unassociated alpha",
                   "<SEPARATOR>", "Thresholding and comparison options",
                   "-fail %g", &failthresh, "Failure threshold difference (0.000001)",
                   "-failpercent %g", &failpercent, "Allow this percentage of failures (0)",
@@ -193,6 +194,7 @@ main(int argc, char* argv[])
     // force a full diff, even for files tagged with the same
     // fingerprint, just in case some mistake has been made.
     imagecache->attribute("deduplicate", 0);
+    imagecache->attribute("unassociatedalpha", noautopremult);
 
     ImageBuf img0, img1;
     if (!read_input(filenames[0], img0, imagecache)
